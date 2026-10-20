@@ -14,7 +14,7 @@
 #include <cstring>
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
-#include "dobby.h"
+extern "C" void A64HookFunction(void* symbol, void* replace, void** result); // And64InlineHook
 
 // ---------- il2cpp api ----------
 struct Il2CppDomain; struct Il2CppAssembly; struct Il2CppImage; struct Il2CppClass;
@@ -258,9 +258,9 @@ static void* Boot(void*) {
     if (!kPC || !mFind || !mW2S || oView < 0 || oPlayer < 0 || oDead < 0) return nullptr; // resolve failed, bail silently
     g_pcType = il2cpp_type_get_object(il2cpp_class_get_type(kPC));
     mUpdate = Meth(kPC, "Update", 0);
-    if (mUpdate) DobbyHook(mUpdate->methodPointer, (void*)hook_update, (void**)&orig_update);
+    if (mUpdate) A64HookFunction(mUpdate->methodPointer, (void*)hook_update, (void**)&orig_update);
     void* egl = dlsym(dlopen("libEGL.so", RTLD_NOW), "eglSwapBuffers");
-    DobbyHook(egl, (void*)hook_swap, (void**)&orig_swap);
+    A64HookFunction(egl, (void*)hook_swap, (void**)&orig_swap);
     return nullptr;
 }
 static void Start() { static bool once; if (once) return; once = true; pthread_t t; pthread_create(&t, nullptr, Boot, nullptr); }
