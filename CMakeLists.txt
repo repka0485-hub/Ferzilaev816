@@ -7,8 +7,14 @@ set(DOBBY_GENERATE_SHARED OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/Dobby dobby)
 
 set(IMGUI third_party/imgui)
+if(EXISTS ${CMAKE_SOURCE_DIR}/src/main.cpp)
+  set(MAIN_SRC src/main.cpp)
+else()
+  set(MAIN_SRC main.cpp)
+endif()
+
 add_library(esp SHARED
-  src/main.cpp
+  ${MAIN_SRC}
   ${IMGUI}/imgui.cpp ${IMGUI}/imgui_draw.cpp ${IMGUI}/imgui_tables.cpp ${IMGUI}/imgui_widgets.cpp
   ${IMGUI}/backends/imgui_impl_opengl3.cpp)
 target_include_directories(esp PRIVATE ${IMGUI} ${IMGUI}/backends third_party/Dobby/include)
