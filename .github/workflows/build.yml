@@ -1,0 +1,25 @@
+name: build
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  android-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: fetch deps
+        run: |
+          git clone --depth 1 --branch v1.91.4 https://github.com/ocornut/imgui third_party/imgui
+          git clone --depth 1 https://github.com/jmpews/Dobby third_party/Dobby
+      - name: configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_LATEST_HOME/build/cmake/android.toolchain.cmake
+          -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-24
+          -DCMAKE_BUILD_TYPE=Release
+      - name: build
+        run: cmake --build build -j$(nproc)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libesp-arm64-v8a
+          path: build/libesp.so
