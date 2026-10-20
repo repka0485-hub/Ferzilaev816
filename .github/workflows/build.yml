@@ -10,7 +10,7 @@ jobs:
       - name: fetch deps
         run: |
           git clone --depth 1 --branch v1.91.4 https://github.com/ocornut/imgui third_party/imgui
-          git clone --depth 1 https://github.com/jmpews/Dobby third_party/Dobby
+          git clone --depth 1 https://github.com/Rprop/And64InlineHook third_party/And64InlineHook
       - name: configure
         run: >
           cmake -S . -B build
